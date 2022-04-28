@@ -62,26 +62,23 @@ void loop() {
 
   // Wait for connected client to send data
   while(!gardener.available()) {
-    delay(2);
+    delay(10);
   }
 
   // Signal to arduino that data is being sent
-  Serial.print("data\n");
+  Serial.flush();
+  Serial.print("data");
 
   /* Collect Data
    *  
    * Format: 
-   * "Plant_number\n"
-   * "Temp\n"
-   * "Moisture\n"
-   *  
+   * "Plant_number\nTemp\nMoisture\r\n"
    */
   
   // Read Plant Number and send to Arduino
-  String request = gardener.readStringUntil('\n');
-  Serial.print(request + '\n');
-  delay(3);
-  
+  String request = gardener.readStringUntil('\r');
+  Serial.println(request);
+  /*
   // Read Temperature and send to Arduino
   request = gardener.readStringUntil('\n');
   Serial.print(request + '\n');
@@ -91,8 +88,9 @@ void loop() {
   request = gardener.readStringUntil('\n');
   Serial.print(request + '\n');
   delay(3);
-  
-  // delay for 3 seconds
-  delay(1000);
+  */
+  // flush buffer and delay for 2 seconds
+  gardener.flush();
+  delay(2000);
   
 }

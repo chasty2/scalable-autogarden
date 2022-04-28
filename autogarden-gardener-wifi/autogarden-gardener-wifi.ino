@@ -64,11 +64,16 @@ void loop() {
     // Signal to arduino that we are connected
     Serial.print("connected\n");
     delay(10);
-    
-    // Read plant number and write to hub
-    serialIn = Serial.readStringUntil('\n');
-    gardener.print(serialIn + '\n');
-    
+
+    // wait for data from Arduino
+    while(!Serial.available()) {
+      delay(100);
+    }
+    // Read data and write to hub
+    serialIn = Serial.readStringUntil('\r');
+    gardener.println(serialIn);
+
+    /*
     // Read temp and write to hub
     serialIn = Serial.readStringUntil('\n');
     gardener.print(serialIn + '\n');
@@ -76,7 +81,7 @@ void loop() {
     // Read moisture and write to hub
     serialIn = Serial.readStringUntil('\n');
     gardener.print(serialIn + '\n');
-
+    */
     // flush buffer to keep data flow in sync
     Serial.flush();
   }

@@ -4,15 +4,9 @@ CS362 Final Project - Gardener Unit - Arduino Code
 Sends data from sensors over serial to the Arduino, and acts on response
 The circuit:
 
-  ESP9266 Wifi Module:
- * Pin 1 - TX -> Arduino RX
- * Pin 2 - GND
- * Pin 3 - CH-PD -> 3.3V
- * Pin 4 - Unused
- * Pin 5 - RST - connect to button
- * Pin 6 - GPIO 0 - Unused
- * Pin 7 - VCC -> 3.3V
- * Pin 8 - RX -> Arduino TX
+  * Pin A0 -> Moisture Sensor
+  * Pin D8 -> Moisture Power
+  * Pin A1 -> Temperature Sensor
 
 Heavily referenced the following tutorials:
 https://www.arduino.cc/reference/en/libraries/wifi/
@@ -69,7 +63,7 @@ void loop() {
       sendData();
       digitalWrite(LED_BUILTIN, HIGH);
     }
-    else if(serialIn.indexOf("No connection") != 0) {
+    else if(serialIn.indexOf("No connection") != -1) {
       digitalWrite(LED_BUILTIN, LOW);
     }
 
@@ -77,8 +71,8 @@ void loop() {
     Serial.flush();
   }
 
-  // delay for 4 seconds
-  delay(4000);
+  // delay for 3 seconds
+  delay(3000);
 }
 
 // function to read moisture sensor
@@ -110,18 +104,16 @@ float readTemp() {
 }
 
 /* send data to hub if connected
-   *  
-   * Format: 
-   * "Plant_number\n"
-   * "Temp\n"
-   * "Moisture\n"
-   */
+ *  
+ * Format: 
+ * "Plant_name\nTemp\nMoisture\r\n"
+ */
 void sendData() {
-  Serial.print("Aloe Vera\n");
+  Serial.println("Aloe Vera\n" + String(tempCelsius) + '\n' + String(moisture));
 
   //Serial.println(tempCelsius);
-  Serial.print(String(tempCelsius) + '\n');
+  //Serial.print(String(tempCelsius) + '\n');
 
   //Serial.println(moisture);
-  Serial.print(String(moisture) + '\n');
+  //Serial.print(String(moisture) + '\n');
 }

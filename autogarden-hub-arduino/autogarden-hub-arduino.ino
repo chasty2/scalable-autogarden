@@ -40,6 +40,7 @@ String ssid;
 String ip;
 String temp;
 String moisture;
+String plantName;
 
 
 void setup() {
@@ -70,7 +71,8 @@ void loop() {
     if(serialIn.indexOf("connected") != -1) {
       readWifiInfo();
       printWifiInfo();
-    } else if(serialIn.indexOf("data") != -1) {
+    } 
+    if(serialIn.indexOf("data") != -1) {
       readData();
     }
   } else {
@@ -82,6 +84,7 @@ void loop() {
     lcd.print(ip);
   }
 
+  Serial.flush();
   delay(2000);
 
 }
@@ -116,15 +119,17 @@ void printWifiInfo() {
 // Reads data from the wifi module, and outputs to LCD
 void readData() {
 
+  // Wait for data
+  while(!Serial.available()) {
+    delay(100);
+  }
+
   /* 
    * Data Format: 
-   * "Plant_number\n"
-   * "Temp\n"
-   * "Moisture\n" 
-   */
-   
+   * "Plant_number\nTemp\nMoisture\n\r\n"
+   */ 
   // Read plant number
-  serialIn = Serial.readStringUntil('\n');
+  plantName = Serial.readStringUntil('\n');
   delay(2);
 
   // Read Temp
@@ -132,16 +137,20 @@ void readData() {
   delay(2);
 
   // Read Moisture
-  moisture = Serial.readStringUntil('\n');
+  moisture = Serial.readStringUntil('\r');
   delay(2);
+
+  // flush buffer
+  Serial.flush();
 
   // Output to LCD
   lcd.clear();
   lcd.setCursor(0,0);
-  lcd.print(serialIn);
+  lcd.print(plantName);
   lcd.setCursor(0,1);
-  lcd.print(temp);
+  lcd.print(temp + "C");
   lcd.setCursor(5,1);
-  lcd.print(moisture);
+  lcd.print(moisture + "%");
+
   
 }
